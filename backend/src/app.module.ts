@@ -7,6 +7,7 @@ import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { AppController } from 'src/app.controller';
 import { AuthGuard } from 'src/common/guards/auth.guard';
+import { DeckModule } from './deck/deck.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
     }),
     UserModule,
     AuthModule,
+    DeckModule,
   ],
   controllers: [AppController],
   providers: [
