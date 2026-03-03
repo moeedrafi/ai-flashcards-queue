@@ -1,25 +1,23 @@
-import { Flashcard } from 'src/flashcard/flashcard.entity';
+import { Deck } from 'src/deck/deck.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class Deck {
+export class Flashcard {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   title: string;
 
-  @OneToMany(() => Flashcard, (flashcard) => flashcard.deck, {
-    cascade: true,
-  })
-  flashcards: Flashcard[];
+  @ManyToOne(() => Deck, (deck) => deck.flashcards)
+  deck: Deck;
 
   @CreateDateColumn()
   createdAt: Date;

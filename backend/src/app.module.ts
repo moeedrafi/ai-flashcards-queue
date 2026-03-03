@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from 'src/app.service';
 import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { DeckModule } from 'src/deck/deck.module';
 import { AppController } from 'src/app.controller';
 import { AuthGuard } from 'src/common/guards/auth.guard';
-import { DeckModule } from './deck/deck.module';
+import { FlashcardModule } from 'src/flashcard/flashcard.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DeckModule } from './deck/deck.module';
     UserModule,
     AuthModule,
     DeckModule,
+    FlashcardModule,
   ],
   controllers: [AppController],
   providers: [
