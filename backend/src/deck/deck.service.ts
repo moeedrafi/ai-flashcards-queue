@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Deck } from 'src/deck/deck.entity';
 import { UserService } from 'src/user/user.service';
 import { CreateDeckDTO } from 'src/deck/dtos/create-deck.dto';
@@ -27,7 +27,39 @@ export class DeckService {
 
   delete() {}
 
-  findAll() {}
+  async findAll(userId: number, page: number, rpp: number) {
+    const [decks, totalItems] = await this.repo.findAndCount({
+      where: { user: { id: userId } },
+      select: ['id', 'title', 'description', 'createdAt', 'updatedAt'],
+      order: { createdAt: 'DESC' },
+      skip: rpp * (page - 1),
+      take: rpp,
+    });
 
-  findOne() {}
+    return {
+      data: decks,
+      message: 'Fetched all decks successfully',
+      meta: {
+        page,
+        rpp,
+        totalItems,
+        totalPages: Math.ceil(totalItems / rpp),
+      },
+    };
+  }
+
+  async findOne(userId: number, deckId: string) {
+    if (!deckId) throw new NotFoundException('deck not found');
+
+    const deck = await this.repo.findOne({
+      where: { id: deckId, user: { id: userId } },
+    });
+
+    if (!deck) throw new NotFoundException('deck not found');
+
+    return {
+      data: deck,
+      message: 'Fetched deck successfully',
+    };
+  }
 }
