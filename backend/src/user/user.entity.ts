@@ -1,3 +1,4 @@
+import { Deck } from 'src/deck/deck.entity';
 import {
   Entity,
   Column,
@@ -7,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -22,6 +24,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Deck, (deck) => deck.user, { cascade: true })
+  deck: Deck[];
 
   @Column({ nullable: true, select: true })
   refreshToken?: string;

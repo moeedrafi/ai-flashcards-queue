@@ -1,3 +1,4 @@
+import { User } from 'src/user/user.entity';
 import { Flashcard } from 'src/flashcard/flashcard.entity';
 import {
   Entity,
@@ -6,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -15,6 +17,12 @@ export class Deck {
 
   @Column()
   title: string;
+
+  @Column()
+  description: string;
+
+  @ManyToOne(() => User, (user) => user.deck)
+  user: User;
 
   @OneToMany(() => Flashcard, (flashcard) => flashcard.deck, {
     cascade: true,

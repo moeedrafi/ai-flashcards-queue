@@ -1,13 +1,26 @@
 import { DeckService } from 'src/deck/deck.service';
-import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { CreateDeckDTO } from 'src/deck/dtos/create-deck.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 
 @Controller('deck')
 export class DeckController {
   constructor(private deckService: DeckService) {}
 
   @Post()
-  createDeck() {
-    return this.deckService.create();
+  createDeck(
+    @Body() body: CreateDeckDTO,
+    @CurrentUser() user: { sub: number },
+  ) {
+    return this.deckService.create(body, user.sub);
   }
 
   @Patch(':deckid')
