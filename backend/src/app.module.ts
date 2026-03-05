@@ -23,7 +23,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        ssl: true,
+        ssl: { rejectUnauthorized: false },
         synchronize: true,
         extra: { max: 5 },
       }),
