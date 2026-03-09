@@ -1,3 +1,4 @@
+import { Deck } from 'src/deck/deck.entity';
 import { DeckDTO } from 'src/deck/dtos/deck.dto';
 import { DeckService } from 'src/deck/deck.service';
 import { CreateDeckDTO } from 'src/deck/dtos/create-deck.dto';
@@ -28,13 +29,20 @@ export class DeckController {
   }
 
   @Patch(':deckid')
-  updateDeck() {
-    return this.deckService.update();
+  updateDeck(
+    @CurrentUser() user: { sub: number },
+    @Param('deckid') deckId: string,
+    @Body() body: Partial<Deck>,
+  ) {
+    return this.deckService.update(user.sub, deckId, body);
   }
 
   @Delete(':deckid')
-  removeDeck() {
-    return this.deckService.delete();
+  removeDeck(
+    @CurrentUser() user: { sub: number },
+    @Param('deckid') deckId: string,
+  ) {
+    return this.deckService.delete(user.sub, deckId);
   }
 
   @Serialize(DeckDTO)

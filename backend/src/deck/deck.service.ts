@@ -23,9 +23,33 @@ export class DeckService {
     return { data: savedDeck, message: 'Created deck successfully' };
   }
 
-  update() {}
+  async update(userId: number, deckId: string, attr: Partial<Deck>) {
+    if (!deckId) throw new NotFoundException('deck not found');
 
-  delete() {}
+    const deck = await this.repo.findOne({
+      where: { id: deckId, user: { id: userId } },
+    });
+
+    if (!deck) throw new NotFoundException('deck not found');
+
+    Object.assign(deck, attr);
+
+    const updatedDeck = await this.repo.save(deck);
+
+    return { data: updatedDeck, message: 'Updated deck successfully' };
+  }
+
+  async delete(userId: number, deckId: string) {
+    if (!deckId) throw new NotFoundException('deck not found');
+
+    const deck = await this.repo.findOne({
+      where: { id: deckId, user: { id: userId } },
+    });
+
+    if (!deck) throw new NotFoundException('deck not found');
+
+    return { message: 'Deleted deck Successfully' };
+  }
 
   async findAll(userId: number, page: number, rpp: number) {
     const [decks, totalItems] = await this.repo.findAndCount({
