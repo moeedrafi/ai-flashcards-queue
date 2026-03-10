@@ -14,7 +14,10 @@ export class Flashcard {
   id: string;
 
   @Column()
-  title: string;
+  front: string;
+
+  @Column()
+  back: string;
 
   @ManyToOne(() => Deck, (deck) => deck.flashcards)
   deck: Deck;
