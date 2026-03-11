@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { FlashcardService } from 'src/flashcard/flashcard.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UpdateFlashcardDTO } from 'src/flashcard/dtos/update-flashcard.dto';
@@ -7,24 +8,45 @@ import {
   Delete,
   Get,
   Param,
+  ParseFilePipeBuilder,
   ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/common/utils/multer';
+import { ALLOWED_DOCUMENT_TYPES } from 'src/common/utils/constants';
 
 @Controller('flashcard')
 export class FlashcardController {
   constructor(private flashcardService: FlashcardService) {}
 
   @Post(':deckid')
+  @UseInterceptors(FileInterceptor('file', multerOptions))
   createFlashcard(
     @CurrentUser() user: { sub: number },
     @Param('deckid', ParseUUIDPipe) deckId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: ALLOWED_DOCUMENT_TYPES })
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 5 })
+        .build({
+          fileIsRequired: true,
+        }),
+    )
+    file: Express.Multer.File,
   ) {
-    // TODO: UPLOAD FILE
-    return this.flashcardService.create(user.sub, deckId);
+    console.log(file);
+    this.flashcardService.create(user.sub, deckId);
+
+    fs.unlink(file.path, (err) => {
+      if (err) console.error('Error deleting file:', err);
+      else console.log('Temporary file deleted:', file.filename);
+    });
   }
 
   @Patch(':flashcardid')
